@@ -1,5 +1,4 @@
-# yandex-turbo-pages
-### Yandex turbo pages generator using Yandex API
+# Клиент для API турбостраниц Яндекса
 
 Отправляет в API произвольное количество страниц в виде XML-документов
 
