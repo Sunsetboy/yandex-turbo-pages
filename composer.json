@@ -3,13 +3,13 @@
   "description": "API client for Yandex turbo pages",
   "version": "0.0.1",
   "require": {
-    "php": "^5.5 || ^7.0",
+    "php": "^5.4 || ^7.0",
     "ext-json":"*",
     "ext-curl":"*"
   },
   "autoload": {
-    "psr-0": {
-      "TurboApi\\": "src/"
+    "psr-4": {
+      "TurboApi\\": "src"
     }
   }
 }
