@@ -359,12 +359,12 @@ class TurboApi
      * Отправка RSS в турбо страницы
      * @param mixed $data
      * @return string ID задачи
-     * @throws Exception
+     * @throws \Exception
      */
     public function uploadRss($data)
     {
         if (!isset($this->uploadAddress)) {
-            throw new Exception('Не задан адрес для отправки данных!');
+            throw new \Exception('Не задан адрес для отправки данных!');
         }
 
         $uploadRoute = explode($this->getApiVersion(), $this->getUploadAddress())[1];
