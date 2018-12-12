@@ -373,9 +373,6 @@ class TurboApi
         $apiResponse = $responseRaw['response'];
         $responseStatus = $responseRaw['curlInfo']['http_code'];
 
-        print_r($responseStatus);
-        print_r($apiResponse);
-
         if ((int)$responseStatus == 202) {
             return json_decode($apiResponse, true)['task_id'] . PHP_EOL;
         }
