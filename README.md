@@ -4,20 +4,31 @@
 
 Для использования API вам необходимо зарегистрироваться в сервисе Яндекс.Вебмастер и получить API-ключ для загрузки турбо-страниц.
 
+Подробно о турбостраницах можно прочитать, например, здесь: https://webmaster.yandex.ru
+
+### Установка
+Установить пакет вы можете через Composer
+```
+composer require yurcrm/yandex-turbo-pages
+```
+
 ### Пример использования
 ```
+// Инициализируем клиент в режиме отладки. Для боевого режима укажите третьим параметром TurboApi::MODE_PRODUCTION
 $turboApi = new TurboApi\TurboApi('адрес сайта', 'ваш токен', TurboApi::MODE_DEBUG);
+
+// Получаем у Яндекса необходимые данные для отправки турбостраниц
 $turboApi->requestUserId();
 $turboApi->requestHost();
 $turboApi->requestUploadAddress();
 
-// лимит числа страниц в рамках одной задачи
-$tasksLimit = 50;
+// лимит числа страниц в рамках одной задачи. В режиме дебага это число ограничено, см. документацию от Яндекса
+$tasksLimit = 30;
 
 $turboPack = new TurboApi\TurboPack('Заголовок сайта', 'URL сайта', 'Краткое описание сайта', 'Код языка сайта');
 
 /*
-	Предположим, у вас есть страницы категорий, у каждой - заголовок и описание
+  Предположим, у вас есть страницы категорий, у каждой - заголовок и описание
 */
 foreach ($categories as $category) {
     $link = 'URL страницы категории';
@@ -35,11 +46,30 @@ foreach ($categories as $category) {
     $turboPack->addItem($taskItem);
 }
 
+// разбиваем массив турбостраниц на задачи
 $tasks = $turboPack->getTasks($tasksLimit);
 
+// В этом массиве будем хранить id задач, чтобы потом получать информацию по ним
+$taskIds = [];
+
+// отправляем задачи в Яндекс
 foreach ($tasks as $task) {
     $taskIds[] = $turboApi->uploadRss($task);
 }
+```
+
+### Как получить статус обработки задачи
+
+Предположим, в предыдущем примере вы получили массив id задач от Яндекса. Получим статус по задаче $taskId
+```php
+// Инициализируем клиент в режиме отладки. Для боевого режима укажите третьим параметром TurboApi::MODE_PRODUCTION
+$turboApi = new TurboApi\TurboApi('адрес сайта', 'ваш токен', TurboApi::MODE_DEBUG);
+
+// Получаем у Яндекса необходимые данные для отправки турбостраниц
+$turboApi->requestUserId();
+$turboApi->requestHost();
+$turboApi->requestUploadAddress();
+$status = $turboApi->getTask($taskId);
 ```
 
 ### Как задать данные сервера API
@@ -47,3 +77,6 @@ foreach ($tasks as $task) {
 ```
 $turboApi = new TurboApi\TurboApi('адрес сайта', 'ваш токен', TurboApi::MODE_DEBUG, 'https://api.webmaster.yandex.net', 'v3.2');
 ```
+
+### Планы развития
+В будущих версиях появится возможность просматривать более детальные ответы от Яндекса, а не только id задач и статусы.

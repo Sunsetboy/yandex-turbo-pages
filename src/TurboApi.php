@@ -359,7 +359,7 @@ class TurboApi
      * Отправка RSS в турбо страницы
      * @param mixed $data
      * @return string ID задачи
-     * @throws \Exception
+     * @throws Exception
      */
     public function uploadRss($data)
     {
@@ -389,13 +389,10 @@ class TurboApi
             return null;
         }
 
-        echo '/user/' . $this->userId . '/hosts/' . $this->hostId . '/turbo/tasks/' . $taskId . PHP_EOL;
         $responseRaw = $this->sendRequest('GET', '/user/' . $this->userId . '/hosts/' . $this->hostId . '/turbo/tasks/' . $taskId);
         $apiResponse = $responseRaw['response'];
         $apiResponseArray = json_decode($apiResponse, true);
         $this->loadStatus = $apiResponseArray['load_status'];
-
-        print_r($responseRaw);
 
         return $this->loadStatus;
     }
