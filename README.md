@@ -77,6 +77,9 @@ $status = $turboApi->getTask($taskId);
 $turboApi = new TurboApi\TurboApi('адрес сайта', 'ваш токен', TurboApi::MODE_DEBUG);
 
 // Получаем у Яндекса необходимые данные
+$turboApi->requestUserId();
+$turboApi->requestHost();
+
 $offset = 0; // Смещение в списке. Минимальное значение — 0
 $limit = 5; // Ограничение на количество элементов в списке. Минимальное значение — 1; максимальное значение — 100.
 $taskTypeFilter = TurboApi::TASK_TYPE_FILTER_DEBUG; // Фильтрация по режиму загрузки RSS-канала. Возможные значения: DEBUG, PRODUCTION, ALL.
