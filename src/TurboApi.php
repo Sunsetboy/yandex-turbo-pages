@@ -14,6 +14,15 @@ class TurboApi
     const MODE_DEBUG = 'DEBUG';
     const MODE_PRODUCTION = 'PRODUCTION';
 
+    const TASK_TYPE_FILTER_DEBUG = 'DEBUG';
+    const TASK_TYPE_FILTER_PRODUCTION = 'PRODUCTION';
+    const TASK_TYPE_FILTER_ALL = 'ALL';
+
+    const LOAD_STATUS_FILTER_PROCESSING = 'PROCESSING';
+    const LOAD_STATUS_FILTER_OK = 'OK';
+    const LOAD_STATUS_FILTER_WARNING = 'WARNING';
+    const LOAD_STATUS_FILTER_ERROR = 'ERROR';
+
     private $hostAddress;
     private $apiVersion;
     private $apiBaseUrl;
@@ -266,14 +275,19 @@ class TurboApi
      * @param string $route
      * @param mixed $data
      * @param array $headers
+     * @param array $getParams
      * @return array
      */
-    private function sendRequest($method, $route, $headers = [], $data = null)
+    private function sendRequest($method, $route, $headers = [], $data = null, $getParams = [])
     {
         $url = $this->getApiURL() . $route;
-        if($this->getMode()) {
-            $url .= '?mode=' . $this->getMode();
+        if ($this->getMode()) {
+            $getParams['mode'] = $this->getMode();
         }
+        if (!empty($getParams)) {
+            $url .= '?' . http_build_query($getParams);
+        }
+
 
         $ch = curl_init();
         $this->curlLink = $ch;
@@ -395,5 +409,38 @@ class TurboApi
         $this->loadStatus = $apiResponseArray['load_status'];
 
         return $this->loadStatus;
+    }
+
+    /**
+     * Запрос списка задач
+     * @param int $offset Смещение в списке. Минимальное значение — 0
+     * @param int $limit Ограничение на количество элементов в списке. Минимальное значение — 1; максимальное значение — 100.
+     * @param string $taskTypeFilter Фильтрация по режиму загрузки RSS-канала. Возможные значения: DEBUG, PRODUCTION, ALL.
+     * @param string $loadStatusFilter Фильтрация по статусу загрузки RSS-канала. Возможные значения: PROCESSING, OK, WARNING, ERROR.
+     * @return array Ответ от api
+     * @link https://yandex.ru/dev/turbo/doc/api/ref/list-tasks-docpage/
+     */
+    public function getTasks($offset = 0, $limit = 10, $taskTypeFilter = null, $loadStatusFilter = null)
+    {
+        if (!isset($this->userId) || !isset($this->hostId)) {
+            return null;
+        }
+
+        $getParams = [
+            'offset' => $offset,
+            'limit' => $limit
+        ];
+        if (isset($taskTypeFilter)) {
+            $getParams['task_type_filter'] = $taskTypeFilter;
+        }
+        if (isset($loadStatusFilter)) {
+            $getParams['load_status_filter'] = $loadStatusFilter;
+        }
+
+        $responseRaw = $this->sendRequest('GET', '/user/' . $this->userId . '/hosts/' . $this->hostId . '/turbo/tasks/', [], null, $getParams);
+        $apiResponse = $responseRaw['response'];
+        $apiResponseArray = json_decode($apiResponse, true);
+
+        return $apiResponseArray;
     }
 }
