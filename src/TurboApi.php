@@ -9,7 +9,7 @@ namespace TurboApi;
 class TurboApi
 {
 
-    const DEFAULT_API_VERSION = 'v3.2';
+    const DEFAULT_API_VERSION = 'v4';
     const DEFAULT_API_BASE_URL = 'https://api.webmaster.yandex.net';
     const MODE_DEBUG = 'DEBUG';
     const MODE_PRODUCTION = 'PRODUCTION';

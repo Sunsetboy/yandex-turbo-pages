@@ -87,9 +87,9 @@ $loadStatusFilter = TurboApi::LOAD_STATUS_FILTER_PROCESSING; // Фильтрац
 $status = $turboApi->getTasks($offset, $limit, $taskTypeFilter, $loadStatusFilter);
 ```
 ### Как задать данные сервера API
-Если необходимо задать данные, отличные от данных по умолчанию (актуальны на 5.12.2018), задайте их через конструктор:
+Если необходимо задать данные, отличные от данных по умолчанию (актуальны на 26.09.2022), задайте их через конструктор:
 ```
-$turboApi = new TurboApi\TurboApi('адрес сайта', 'ваш токен', TurboApi::MODE_DEBUG, 'https://api.webmaster.yandex.net', 'v3.2');
+$turboApi = new TurboApi\TurboApi('адрес сайта', 'ваш токен', TurboApi::MODE_DEBUG, 'https://api.webmaster.yandex.net', 'v4');
 ```
 
 ### Планы развития
