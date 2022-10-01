@@ -2,6 +2,10 @@
 
 namespace TurboApi;
 
+use TurboApi\Exceptions\TurboApiConnectionException;
+use TurboApi\Exceptions\TurboApiException;
+use TurboApi\Exceptions\UploadRssException;
+
 /**
  * Класс для работы с API турбостраниц Яндекса
  * Class TurboApi
@@ -23,86 +27,86 @@ class TurboApi
     const LOAD_STATUS_FILTER_WARNING = 'WARNING';
     const LOAD_STATUS_FILTER_ERROR = 'ERROR';
 
-    private $hostAddress;
-    private $apiVersion;
-    private $apiBaseUrl;
-    private $userId;
-    private $hostId;
-    private $isDebug;
-    private $mode;
-    private $token;
-    private $authHeader;
+    private string $hostAddress;
+    private string $apiVersion;
+    private string $apiBaseUrl;
+    private int $userId;
+    private string $hostId;
+    private bool $isDebug;
+    private string $mode;
+    private string $token;
+    private string $authHeader;
     private $curlLink;
-    private $uploadAddress;
-    private $loadStatus;
+    private string $uploadAddress;
+    private string $loadStatus;
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getHostAddress()
+    public function getHostAddress(): string
     {
         return $this->hostAddress;
     }
 
     /**
-     * @param mixed $hostAddress
+     * @param string $hostAddress
      * @return TurboApi
      */
-    public function setHostAddress($hostAddress)
+    public function setHostAddress(string $hostAddress): self
     {
         $this->hostAddress = $hostAddress;
         return $this;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getApiVersion()
+    public function getApiVersion(): string
     {
         return $this->apiVersion;
     }
 
     /**
-     * @param mixed $apiVersion
+     * @param string $apiVersion
      * @return TurboApi
      */
-    public function setApiVersion($apiVersion)
+    public function setApiVersion(string $apiVersion): self
     {
         $this->apiVersion = $apiVersion;
         return $this;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getApiBaseUrl()
+    public function getApiBaseUrl(): string
     {
         return $this->apiBaseUrl;
     }
 
     /**
-     * @param mixed $apiBaseUrl
+     * @param string $apiBaseUrl
      * @return TurboApi
      */
-    public function setApiBaseUrl($apiBaseUrl)
+    public function setApiBaseUrl(string $apiBaseUrl): self
     {
         $this->apiBaseUrl = $apiBaseUrl;
         return $this;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getMode()
+    public function getMode(): string
     {
         return $this->mode;
     }
 
     /**
-     * @param mixed $mode
+     * @param string $mode
      * @return TurboApi
      */
-    public function setMode($mode)
+    public function setMode(string $mode): self
     {
         $this->mode = $mode;
         return $this;
@@ -128,79 +132,79 @@ class TurboApi
      * @param mixed $curlLink
      * @return TurboApi
      */
-    public function setCurlLink($curlLink)
+    public function setCurlLink($curlLink): self
     {
         $this->curlLink = $curlLink;
         return $this;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getUploadAddress()
+    public function getUploadAddress(): string
     {
         return $this->uploadAddress;
     }
 
     /**
-     * @param mixed $uploadAddress
+     * @param string $uploadAddress
      * @return TurboApi
      */
-    public function setUploadAddress($uploadAddress)
+    public function setUploadAddress(string $uploadAddress): self
     {
         $this->uploadAddress = $uploadAddress;
         return $this;
     }
 
     /**
-     * @return mixed
+     * @return int
      */
-    public function getUserId()
+    public function getUserId(): int
     {
         return $this->userId;
     }
 
     /**
-     * @param mixed $userId
+     * @param int $userId
      * @return TurboApi
      */
-    public function setUserId($userId)
+    public function setUserId(int $userId): self
     {
         $this->userId = $userId;
         return $this;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getHostId()
+    public function getHostId(): string
     {
         return $this->hostId;
     }
 
     /**
-     * @param mixed $hostId
+     * @param string $hostId
      * @return TurboApi
      */
-    public function setHostId($hostId)
+    public function setHostId(string $hostId): self
     {
         $this->hostId = $hostId;
         return $this;
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
-    public function getisDebug()
+    public function getisDebug(): bool
     {
         return $this->isDebug;
     }
 
     /**
-     * @param mixed $isDebug
+     * @param bool $isDebug
      * @return TurboApi
      */
-    public function setIsDebug($isDebug)
+    public function setIsDebug(bool $isDebug): self
     {
         $this->isDebug = $isDebug;
         return $this;
@@ -209,7 +213,7 @@ class TurboApi
     /**
      * @return mixed
      */
-    public function getToken()
+    public function getToken(): string
     {
         return $this->token;
     }
@@ -218,7 +222,7 @@ class TurboApi
      * @param mixed $token
      * @return TurboApi
      */
-    public function setToken($token)
+    public function setToken($token): self
     {
         $this->token = $token;
         return $this;
@@ -227,7 +231,7 @@ class TurboApi
     /**
      * @return string
      */
-    public function getAuthHeader()
+    public function getAuthHeader(): string
     {
         return $this->authHeader;
     }
@@ -236,7 +240,7 @@ class TurboApi
      * @param string $authHeader
      * @return TurboApi
      */
-    public function setAuthHeader($authHeader)
+    public function setAuthHeader($authHeader): self
     {
         $this->authHeader = $authHeader;
         return $this;
@@ -246,7 +250,7 @@ class TurboApi
      * Возвращает адрес API
      * @return string
      */
-    public function getApiURL()
+    public function getApiURL(): string
     {
         return $this->getApiBaseUrl() . '/' . $this->getApiVersion();
     }
@@ -259,8 +263,13 @@ class TurboApi
      * @param string $apiBaseUrl
      * @param string $apiVersion
      */
-    public function __construct($hostAddress, $token, $mode = self::MODE_DEBUG, $apiBaseUrl = self::DEFAULT_API_BASE_URL, $apiVersion = self::DEFAULT_API_VERSION)
-    {
+    public function __construct(
+        string $hostAddress,
+        string $token,
+        string $mode = self::MODE_DEBUG,
+        string $apiBaseUrl = self::DEFAULT_API_BASE_URL,
+        string $apiVersion = self::DEFAULT_API_VERSION
+    ) {
         $this->setToken($token)
             ->setMode($mode)
             ->setApiBaseUrl($apiBaseUrl)
@@ -287,7 +296,6 @@ class TurboApi
         if (!empty($getParams)) {
             $url .= '?' . http_build_query($getParams);
         }
-
 
         $ch = curl_init();
         $this->curlLink = $ch;
@@ -318,6 +326,9 @@ class TurboApi
     {
         $responseRaw = $this->sendRequest('GET', '/user/');
         $apiResponse = $responseRaw['response'];
+        if (!isset(json_decode($apiResponse, true)['user_id'])) {
+            throw new TurboApiConnectionException('Не удалось получить ID пользователя');
+        }
         $userId = json_decode($apiResponse, true)['user_id'];
         $this->setUserId($userId);
 
@@ -327,11 +338,12 @@ class TurboApi
     /**
      * Получение id хоста в вебмастере
      * @return string|null
+     * @throws TurboApiException|TurboApiConnectionException
      */
-    public function requestHost()
+    public function requestHost(): ?string
     {
         if (!isset($this->userId)) {
-            return null;
+            throw new TurboApiException('Не задан ID пользователя');
         }
 
         /*
@@ -341,6 +353,10 @@ class TurboApi
         $apiResponse = $responseRaw['response'];
         $apiResponseArray = json_decode($apiResponse, true);
 
+        if (!isset($apiResponseArray['hosts'])) {
+            throw new TurboApiConnectionException('Не удалось получить список хостов пользователя');
+        }
+
         // Выбираем нужный хост
         foreach ($apiResponseArray['hosts'] as $host) {
             if (strcmp($host['ascii_host_url'], $this->getHostAddress()) === 0) {
@@ -348,22 +364,28 @@ class TurboApi
                 return $host['host_id'];
             }
         }
-        return null;
+
+        throw new TurboApiException('Хост не найден в хостах пользователя');
     }
 
     /**
      * Получение адреса для загрузки RSS
      * @return string
+     * @throws TurboApiConnectionException
+     * @throws TurboApiException
      */
-    public function requestUploadAddress()
+    public function requestUploadAddress(): string
     {
         if (!isset($this->userId) || !isset($this->hostId)) {
-            return null;
+            throw new TurboApiException('Хост или id пользователя не задан');
         }
 
         $responseRaw = $this->sendRequest('GET', '/user/' . $this->getUserId() . '/hosts/' . $this->getHostId() . '/turbo/uploadAddress/');
         $apiResponse = $responseRaw['response'];
         $apiResponseArray = json_decode($apiResponse, true);
+        if (!isset($apiResponseArray['upload_address'])) {
+            throw new TurboApiConnectionException('Не удалось получить адрес загрузки RSS');
+        }
         $this->uploadAddress = $apiResponseArray['upload_address'];
 
         return $this->uploadAddress;
@@ -373,12 +395,13 @@ class TurboApi
      * Отправка RSS в турбо страницы
      * @param mixed $data
      * @return string ID задачи
-     * @throws Exception
+     * @throws TurboApiException
+     * @throws UploadRssException
      */
-    public function uploadRss($data)
+    public function uploadRss($data): string
     {
         if (!isset($this->uploadAddress)) {
-            throw new \Exception('Не задан адрес для отправки данных!');
+            throw new TurboApiException('Не задан адрес для отправки данных!');
         }
 
         $uploadRoute = explode($this->getApiVersion(), $this->getUploadAddress())[1];
@@ -389,6 +412,17 @@ class TurboApi
 
         if ((int)$responseStatus == 202) {
             return json_decode($apiResponse, true)['task_id'] . PHP_EOL;
+        } else {
+            $uploadRssException = new UploadRssException(
+                json_decode($apiResponse, true)['error_message'] ??
+                'Unknown exception'
+            );
+            $uploadRssException->setHttpCode((int)$responseStatus);
+            $uploadRssException->setErrorCode(
+                json_decode($apiResponse, true)['error_code'] ??
+                'Unknown error code'
+            );
+            throw $uploadRssException;
         }
     }
 
@@ -400,7 +434,7 @@ class TurboApi
     public function getTask($taskId)
     {
         if (!isset($this->userId) || !isset($this->hostId)) {
-            return null;
+            throw new TurboApiException('Хост или id пользователя не задан');
         }
 
         $responseRaw = $this->sendRequest('GET', '/user/' . $this->userId . '/hosts/' . $this->hostId . '/turbo/tasks/' . $taskId);
@@ -423,7 +457,7 @@ class TurboApi
     public function getTasks($offset = 0, $limit = 10, $taskTypeFilter = null, $loadStatusFilter = null)
     {
         if (!isset($this->userId) || !isset($this->hostId)) {
-            return null;
+            throw new TurboApiException('Хост или id пользователя не задан');
         }
 
         $getParams = [
