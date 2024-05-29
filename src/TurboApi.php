@@ -446,6 +446,22 @@ class TurboApi
     }
 
     /**
+     * Response format: https://yandex.ru/dev/turbo/doc/api/ref/get-task-id.html
+     */
+    public function getTaskFullInfo(string $taskId): array
+    {
+        if (!isset($this->userId) || !isset($this->hostId)) {
+            throw new TurboApiException('Хост или id пользователя не задан');
+        }
+
+        $responseRaw = $this->sendRequest('GET', '/user/' . $this->userId . '/hosts/' . $this->hostId . '/turbo/tasks/' . $taskId);
+        $apiResponse = $responseRaw['response'];
+        $apiResponseArray = json_decode($apiResponse, true);
+
+        return $apiResponseArray;
+    }
+
+    /**
      * Запрос списка задач
      * @param int $offset Смещение в списке. Минимальное значение — 0
      * @param int $limit Ограничение на количество элементов в списке. Минимальное значение — 1; максимальное значение — 100.
